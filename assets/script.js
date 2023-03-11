@@ -10,16 +10,38 @@ const currentEvent = document.getElementById('hour-10');
 const futureEvent = document.getElementById('hour-11');
 
 
+// We want this to be an object like this:
+//  {'hour-11': 'some saved text', 'hour-12': 'some diff text'}
 var savedData = localStorage.getItem('savedData')
+
+
+function getTextForEachTimeBlock() {
+  // return this: {'hour-11': 'some saved text', 'hour-12': 'some diff text'}
+  let data = {}
+
+  $('.time-block').each(function() {
+    let divId = $(this).attr('id') 
+    let text = $(this).find('textarea').val()
+    data[divId] = text  // maps 'hour-11' to text
+    // Get the inner `text-area` elements value
+  })
+  return data
+}
+
+function saveTextToLocalStorage() {
+  savedData = getTextForEachTimeBlock()
+  localStorage.setItem('savedData', JSON.stringify(savedData));
+}
 
 
 $(function () {
   saveButton.addEventListener('click', function() {
     // ME-- add code for saving user input
-
-    savedData = localStorage.setItem('savedData', JSON.stringify (saveButton));
-    saveButton.textContent = savedData; // This works. Don't edit. 
+    //saveButton.textContent = savedData; // This works. Don't edit. 
   })
+
+
+
   // TODO: Add a listener for click events on the save button. This code should
   // use the id in the containing time-block as a key to save the user input in
   // local storage. HINT: What does `this` reference in the click listener
@@ -47,3 +69,34 @@ $(function () {
 const currentDay = document.getElementById('currentDay');
 currentDay.innerText = dayjs();
 // ME-- want to change format of date 
+
+
+$(document).ready(function () {
+  let currentHour = new Date().getHours()
+  let textData = JSON.parse(savedData)
+
+  $('.time-block').each(function() {
+    console.log("IM RUNNING!")
+    let divId = $(this).attr('id')  // 'hour-11'
+    let textForThisTimeBlock = textData[divId]
+
+    // Get the int suffix from divId
+    divId = divId.replace(/hour-/g, '');
+    console.log(divId)
+    // Compare that number to the current hour and set correct class.
+    if (divId == currentHour){
+      $(this).addClass('present')
+    }
+    if(divId > currentHour){
+      $(this).addClass('future')
+    }
+    if(divId < currentHour){
+      $(this).addClass('past')
+    }
+    // Set past, present, or  future based on currentHour
+  })
+
+
+})
+
+// hours in 24 hour format. suffix of each time-block element's id to current 24 our integer hour.
