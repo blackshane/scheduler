@@ -3,16 +3,24 @@
 // in the html.
 
 
-const saveButton = document.querySelector('.saveBtn');
-const input = document.querySelector('container-fluid');
-const pastEvent = document.getElementById('hour-9');
-const currentEvent = document.getElementById('hour-10');
-const futureEvent = document.getElementById('hour-11');
+var saveButton = document.querySelector('.saveBtn');
+var input = document.querySelector('container-fluid');
+
 
 
 // We want this to be an object like this:
 //  {'hour-11': 'some saved text', 'hour-12': 'some diff text'}
 var savedData = localStorage.getItem('savedData')
+
+//function renderLastSaved() {
+  //var dataInLocal = localStorage.getItem(savedData);
+
+ // if (dataInLocal === null) {
+  //  return;
+//  }
+// }
+
+
 
 
 function getTextForEachTimeBlock() {
@@ -25,7 +33,7 @@ function getTextForEachTimeBlock() {
     data[divId] = text  // maps 'hour-11' to text
     // Get the inner `text-area` elements value
   })
-  return data
+  return data  
 }
 
 function saveTextToLocalStorage() {
@@ -33,12 +41,19 @@ function saveTextToLocalStorage() {
   localStorage.setItem('savedData', JSON.stringify(savedData));
 }
 
+function renderLastSaved() {
+ var lastSaved = JSON.parse(localStorage.getItem("savedData"))
+ console.log(lastSaved);
+ if (lastSaved == 'savedData') {
+document.write(lastSaved)
+
+    // Element.getElementsByTagName(textarea).textContent = savedDataOne;
+ }
+}
+renderLastSaved();
 
 $(function () {
-  saveButton.addEventListener('click', function() {
-    // ME-- add code for saving user input
-    //saveButton.textContent = savedData; // This works. Don't edit. 
-  })
+  saveButton.addEventListener('click', saveTextToLocalStorage)
 
 
 
@@ -67,7 +82,7 @@ $(function () {
 // This will set the current day
 
 const currentDay = document.getElementById('currentDay');
-currentDay.innerText = dayjs();
+currentDay.innerText = dayjs().format('ddd MMM D, Hmm')
 // ME-- want to change format of date 
 
 
@@ -99,4 +114,3 @@ $(document).ready(function () {
 
 })
 
-// hours in 24 hour format. suffix of each time-block element's id to current 24 our integer hour.
