@@ -1,25 +1,9 @@
-// Wrap all code that interacts with the DOM in a call to jQuery to ensure that
-// the code isn't run until the browser has finished rendering all the elements
-// in the html.
-
-
-var saveButton = document.querySelector('.saveBtn');
-var input = document.querySelector('container-fluid');
-
-
+const input = document.querySelector('container-fluid');
 
 // We want this to be an object like this:
 //  {'hour-11': 'some saved text', 'hour-12': 'some diff text'}
 var savedData = localStorage.getItem('savedData')
-
-//function renderLastSaved() {
-  //var dataInLocal = localStorage.getItem(savedData);
-
- // if (dataInLocal === null) {
-  //  return;
-//  }
-// }
-
+const currentDay = document.getElementById('currentDay');
 
 
 
@@ -37,25 +21,43 @@ function getTextForEachTimeBlock() {
 }
 
 function saveTextToLocalStorage() {
+  console.log('SAVE BUTTON HANDLER')
   savedData = getTextForEachTimeBlock()
+  console.log(savedData)
   localStorage.setItem('savedData', JSON.stringify(savedData));
 }
 
-function renderLastSaved() {
- var lastSaved = JSON.parse(localStorage.getItem("savedData"))
- console.log(lastSaved);
- if (lastSaved == 'savedData') {
-document.write(lastSaved)
 
-    // Element.getElementsByTagName(textarea).textContent = savedDataOne;
- }
-}
-renderLastSaved();
-
-$(function () {
-  saveButton.addEventListener('click', saveTextToLocalStorage)
+$('.saveBtn').click(saveTextToLocalStorage)
 
 
+$(document).ready(function () {
+  currentDay.innerText = dayjs().format('ddd MMM D, Hmm')
+  let currentHour = new Date().getHours()
+  let textData = JSON.parse(savedData)
+
+  $('.time-block').each(function() {
+    let divId = $(this).attr('id')  // 'hour-11'
+    let textForThisTimeBlock = textData[divId]
+    $(this).find('textarea').val(textForThisTimeBlock)
+
+    // Get the int suffix from divId
+    let hourOfDay = divId.replace('hour-', '');
+    // Compare that number to the current hour and set correct class.
+    if (hourOfDay == currentHour){
+      $(this).addClass('present')
+    }
+    if(hourOfDay > currentHour){
+      $(this).addClass('future')
+    }
+    if(hourOfDay < currentHour){
+      $(this).addClass('past')
+    }
+    // Set past, present, or  future based on currentHour
+  })
+
+
+})
 
   // TODO: Add a listener for click events on the save button. This code should
   // use the id in the containing time-block as a key to save the user input in
@@ -74,43 +76,3 @@ $(function () {
   // the values of the corresponding textarea elements. HINT: How can the id
   // attribute of each time-block be used to do this?
   //
-  
-});
-
-
-
-// This will set the current day
-
-const currentDay = document.getElementById('currentDay');
-currentDay.innerText = dayjs().format('ddd MMM D, Hmm')
-// ME-- want to change format of date 
-
-
-$(document).ready(function () {
-  let currentHour = new Date().getHours()
-  let textData = JSON.parse(savedData)
-
-  $('.time-block').each(function() {
-    console.log("IM RUNNING!")
-    let divId = $(this).attr('id')  // 'hour-11'
-    let textForThisTimeBlock = textData[divId]
-
-    // Get the int suffix from divId
-    divId = divId.replace(/hour-/g, '');
-    console.log(divId)
-    // Compare that number to the current hour and set correct class.
-    if (divId == currentHour){
-      $(this).addClass('present')
-    }
-    if(divId > currentHour){
-      $(this).addClass('future')
-    }
-    if(divId < currentHour){
-      $(this).addClass('past')
-    }
-    // Set past, present, or  future based on currentHour
-  })
-
-
-})
-
